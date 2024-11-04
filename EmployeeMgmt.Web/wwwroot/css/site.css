@@ -1,0 +1,65 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    color: #343a40;
+}
+
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .table th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+.btn {
+    margin-right: 5px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.text-danger {
+    font-size: 0.875rem;
+}

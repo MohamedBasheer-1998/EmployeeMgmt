@@ -1,6 +1,8 @@
 ﻿using EmployeeMgmt.Application.DTOs;
 using EmployeeMgmt.Application.Interfaces;
+using EmployeeMgmt.Infrastructure.EmpDBContext;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace EmployeeMgmt.Web.Controllers
@@ -8,20 +10,31 @@ namespace EmployeeMgmt.Web.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
+        private readonly EmployeeMgmtDbContext _context;
 
-        public DepartmentController(IDepartmentService departmentService)
+        public DepartmentController(IDepartmentService departmentService, EmployeeMgmtDbContext context)
         {
             _departmentService = departmentService;
+            _context = context;
         }
 
-      
+
         public async Task<IActionResult> Index()
         {
-            var departments = await _departmentService.GetAllDepartmentsAsync();
+            var departments = await _context.Departments
+                .Select(d => new DepartmentDto
+                {
+                    DepartmentId = d.DepartmentId,
+                    DepartmentName = d.DepartmentName,
+                    Description = d.Description,
+                    EmployeeCount = d.Employees.Count()
+                })
+                .ToListAsync();
+
             return View(departments);
         }
 
-       
+
         public IActionResult Create()
         {
             return View();
@@ -54,7 +67,7 @@ namespace EmployeeMgmt.Web.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, DepartmentDto departmentDto)
+        public async Task<IActionResult> Edit(Guid id, DepartmentDto departmentDto)
         {
             if (id != departmentDto.DepartmentId)
             {

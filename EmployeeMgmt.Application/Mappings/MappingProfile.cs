@@ -10,6 +10,8 @@ namespace EmployeeMgmt.Application.Mappings
         {
             CreateMap<Employee, EmployeeDto>();
             CreateMap<EmployeeDto, Employee>();
+            CreateMap<Department, DepartmentDto>();
+            CreateMap<DepartmentDto, Department>();
         }
     }
 }

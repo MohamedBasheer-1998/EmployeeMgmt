@@ -5,7 +5,7 @@ namespace EmployeeMgmt.Application.DTOs
     public class DepartmentDto
     {
         [Required]
-        public int DepartmentId { get; set; }
+        public Guid DepartmentId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -13,5 +13,6 @@ namespace EmployeeMgmt.Application.DTOs
 
         [StringLength(500)]
         public string Description { get; set; }
+        public int EmployeeCount { get; set; }
     }
 }

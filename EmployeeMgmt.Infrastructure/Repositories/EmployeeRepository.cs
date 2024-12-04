@@ -22,12 +22,18 @@ namespace EmployeeMgmt.Infrastructure.Repositories
 
         public async Task AddAsync(Employee employee)
         {
+            if (employee.HireDate.Offset != TimeSpan.Zero)
+            {
+                employee.HireDate = employee.HireDate.ToUniversalTime();
+            }
+
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Employee employee)
         {
+            employee.HireDate = employee.HireDate.ToUniversalTime();
             _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployeeMgmt.Application.DTOs
 {
@@ -17,7 +18,7 @@ namespace EmployeeMgmt.Application.DTOs
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid Email Address.")]
         public string Email { get; set; }
-
-        public DateTime HireDate { get; set; }
+        public DateTimeOffset HireDate { get; set; }
+        public string DepartmentName { get; set; }
     }
 }

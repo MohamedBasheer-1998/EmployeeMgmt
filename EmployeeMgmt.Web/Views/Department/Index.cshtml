@@ -1,6 +1,67 @@
-﻿namespace EmployeeMgmt.Web.Views.Department
-{
-    public class Index
-    {
-    }
+﻿@model IEnumerable<EmployeeMgmt.Application.DTOs.DepartmentDto>
+
+@{
+    ViewData["Title"] = "Departments";
 }
+
+<h2>Departments</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Create New Department</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Department Name</th>
+            <th>Description</th>
+            <th>Employee Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var department in Model)
+        {
+            <tr>
+                <td>@department.DepartmentName</td>
+                <td>@department.Description</td>
+                <td>@department.EmployeeCount</td>
+                <td>
+                    <label class="btn btn-secondary" for="toggle-@department.DepartmentId">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </label>
+                    <input type="checkbox" id="toggle-@department.DepartmentId" class="action-toggle" style="display:none;">
+
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@department.DepartmentId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@department.DepartmentId" class="btn btn-danger">Delete</a>
+                        <a asp-action="Details" asp-route-id="@department.DepartmentId" class="btn btn-primary">View Details</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<style>
+    .action-buttons {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        margin-top: 5px;
+        z-index: 100;
+    }
+
+
+    input[type="checkbox"]:checked + .action-buttons {
+        display: block;
+    }
+
+    .action-buttons a {
+        display: block;
+        margin-bottom: 5px;
+    }
+</style>

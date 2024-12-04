@@ -38,10 +38,9 @@ namespace EmployeeMgmt.Application.Services
             return _mapper.Map<EmployeeDto>(employee);
         }
 
-        public async Task<bool> UpdateEmployeeAsync(Guid id, EmployeeDto employeeDto)
+        public async Task<bool> UpdateEmployeeAsync(Employee employee)
         {
-            var employee = _mapper.Map<Employee>(employeeDto);
-            employee.EmployeeId = id;
+           
             await _employeeRepository.UpdateAsync(employee);
             return true;
         }

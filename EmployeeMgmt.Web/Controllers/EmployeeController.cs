@@ -1,6 +1,11 @@
 ﻿using EmployeeMgmt.Application.DTOs;
 using EmployeeMgmt.Application.Interfaces;
+using EmployeeMgmt.Application.Services;
+using EmployeeMgmt.Domain.Entities;
+using EmployeeMgmt.Infrastructure.EmpDBContext;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace EmployeeMgmt.Web.Controllers
@@ -8,67 +13,89 @@ namespace EmployeeMgmt.Web.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IDepartmentService _departmentService;
+        private readonly EmployeeMgmtDbContext _context;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService, IDepartmentService departmentService, EmployeeMgmtDbContext context)
         {
             _employeeService = employeeService;
+            _departmentService = departmentService;
+            _context = context;
         }
 
         
         public async Task<IActionResult> Index()
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
+            List<EmployeeDto> employees = await (from emp in _context.Employees
+                                                 join dep in _context.Departments on emp.DepartmentId equals dep.DepartmentId
+                                                 select new EmployeeDto
+                                                 {
+                                                     EmployeeId = emp.EmployeeId,
+                                                     EmployeeCode = emp.EmployeeCode,
+                                                     Name = emp.Name,
+                                                     Email = emp.Email,
+                                                     HireDate = emp.HireDate,
+                                                     DepartmentName = dep.DepartmentName,
+
+
+                                                 }).ToListAsync();
             return View(employees);
         }
 
-     
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var model = new EmployeeViewModel
+            {
+                Departments = await _context.Departments.ToListAsync()
+            };
+            return View(model); 
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EmployeeDto employeeDto)
+        public async Task<IActionResult> Create(EmployeeViewModel employeeViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                await _employeeService.CreateEmployeeAsync(employeeDto);
+            employeeViewModel.Employee.HireDate = employeeViewModel.Employee.HireDate.ToUniversalTime();
+            _context.Employees.Add(employeeViewModel.Employee);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employeeDto);
+
         }
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            var employee = await _employeeService.GetEmployeeByIdAsync(id);
+            var employee = await _context.Employees.Where(x => x.EmployeeId == id).FirstOrDefaultAsync();
+
             if (employee == null)
             {
                 return NotFound();
             }
-            return View(employee);
+
+            var departments = await _context.Departments.ToListAsync();
+
+            var viewModel = new EmployeeViewModel
+            {
+                Employee = employee,
+                Departments = departments
+            };
+
+            return View(viewModel);
         }
 
-     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, EmployeeDto employeeDto)
+        public async Task<IActionResult> Edit(EmployeeViewModel viewModel)
         {
-            if (id != employeeDto.EmployeeId)
-            {
-                return BadRequest();
-            }
 
-            if (ModelState.IsValid)
-            {
-                await _employeeService.UpdateEmployeeAsync(id, employeeDto);
+            _ = await _employeeService.UpdateEmployeeAsync(viewModel.Employee);
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employeeDto);
+            
+           
         }
 
-       
+
         public async Task<IActionResult> Delete(Guid id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
@@ -76,7 +103,8 @@ namespace EmployeeMgmt.Web.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+            await _employeeService.DeleteEmployeeAsync(id);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost, ActionName("Delete")]

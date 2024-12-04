@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EmployeeMgmt.Application.Services;
+using EmployeeMgmt.Domain.Entities;
 
 namespace EmployeeMgmt.API.Controllers
 {
@@ -54,7 +55,7 @@ namespace EmployeeMgmt.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(Guid  id, EmployeeDto employeeDto)
+        public async Task<IActionResult> UpdateEmployee(Guid  id, Employee employeeDto)
         {
             if (id != employeeDto.EmployeeId)
             {
@@ -66,7 +67,7 @@ namespace EmployeeMgmt.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _employeeService.UpdateEmployeeAsync(id, employeeDto);
+            var result = await _employeeService.UpdateEmployeeAsync(employeeDto);
 
             if (!result)
             {

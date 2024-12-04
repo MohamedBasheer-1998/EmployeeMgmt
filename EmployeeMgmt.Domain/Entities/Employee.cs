@@ -1,4 +1,6 @@
-﻿namespace EmployeeMgmt.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EmployeeMgmt.Domain.Entities
 {
     public class Employee
     {
@@ -8,7 +10,8 @@
         public string Email { get; set; }
         public Guid DepartmentId { get; set; }
         public Department Department { get; set; }
-        public DateTime HireDate { get; set; }
+
+        public DateTimeOffset HireDate { get; set; }
 
        
         public Employee() { }
